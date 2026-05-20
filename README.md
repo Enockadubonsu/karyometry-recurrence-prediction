@@ -39,13 +39,17 @@ relative to the valid patient-level estimate.
 
 ## Repository Structure
 
-
+```
+karyometry-recurrence-prediction/
+│
 ├── code/
-│   ├── karyometry_analysis.R   # Full LOOCV pipeline (Layers 1-3)
-│   └── figures.R               # All 7 figures
+│   ├── karyometry_analysis.R       # Full LOOCV pipeline (Layers 1-3)
+│   └── figures.R                   # All 7 figures
+│
 ├── manuscript/
-│   ├── BIOS648_Final_Manuscript.tex   # LaTeX source
-│   └── BIOS648_Final_Manuscript.pdf   # Compiled PDF
+│   ├── BIOS648_Final_Manuscript.tex    # LaTeX source
+│   └── BIOS648_Final_Manuscript.pdf    # Compiled PDF
+│
 ├── figures/
 │   ├── Fig1_MCE_forestplot.png
 │   ├── Fig2_SensSPec.png
@@ -53,10 +57,10 @@ relative to the valid patient-level estimate.
 │   ├── FigS1_FeatureImportance.png
 │   ├── FigS2_Leakage.png
 │   └── FigS3_Heatmap_MCE.png
+│
 └── data/
-└── README.md               # Data source and access instructions
-
-
+    └── README.md                   # Data source and access instructions
+```
 ---
 
 ## Methods Summary
