@@ -1,0 +1,796 @@
+
+
+\documentclass[12pt, onecolumn]{article}
+\usepackage[top=1in, bottom=1in, left=1.25in, right=1.25in,
+            headheight=14pt]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{mdframed}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{microtype}
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{tocloft}
+\usepackage[numbers, sort&compress]{natbib}
+
+% ── Colors ───────────────────────────────────────────────────────
+\definecolor{navyblue}{HTML}{1F4E79}
+\definecolor{tealgreen}{HTML}{0F6E56}
+\definecolor{lightblue}{HTML}{D6E4F0}
+\definecolor{lightteal}{HTML}{E1F5EE}
+\definecolor{lightgray}{HTML}{F2F2F2}
+\definecolor{midgray}{HTML}{595959}
+\definecolor{repA}{HTML}{2166AC}
+\definecolor{repB}{HTML}{1B7837}
+\definecolor{repC}{HTML}{D6604D}
+\definecolor{metaC}{HTML}{762A83}
+
+% ── Line spacing ─────────────────────────────────────────────────
+\setstretch{1.25}
+
+% ── No header, plain footer with page number ─────────────────────
+\pagestyle{plain}
+
+% ── Section formatting ───────────────────────────────────────────
+\titleformat{\section}
+  {\large\bfseries\color{navyblue}}
+  {\thesection.}{0.6em}{}
+  [\vspace{-4pt}\textcolor{navyblue}{\hrule height 0.7pt}\vspace{3pt}]
+
+\titleformat{\subsection}
+  {\normalsize\bfseries\color{tealgreen}}
+  {\thesubsection}{0.6em}{}
+
+\titleformat{\subsubsection}
+  {\normalsize\bfseries\color{midgray}}
+  {\thesubsubsection}{0.6em}{}
+
+\titlespacing{\section}{0pt}{14pt}{5pt}
+\titlespacing{\subsection}{0pt}{10pt}{3pt}
+\titlespacing{\subsubsection}{0pt}{7pt}{2pt}
+
+% ── Table of contents formatting ─────────────────────────────────
+\renewcommand{\cftsecfont}{\bfseries\color{navyblue}}
+\renewcommand{\cftsecpagefont}{\bfseries\color{navyblue}}
+\renewcommand{\cftsubsecfont}{\color{midgray}}
+\renewcommand{\cftsubsecpagefont}{\color{midgray}}
+\renewcommand{\cftsecdotsep}{\cftdotsep}
+\setlength{\cftbeforesecskip}{5pt}
+\setlength{\cftbeforesubsecskip}{2pt}
+\renewcommand{\contentsname}{\color{navyblue}Table of Contents}
+
+% ── Caption formatting ───────────────────────────────────────────
+\captionsetup{font=small, labelfont=bf, labelsep=period,
+              justification=justified, singlelinecheck=false}
+
+% ── Note / summary boxes ─────────────────────────────────────────
+\newmdenv[backgroundcolor=lightblue, linecolor=navyblue,
+          linewidth=0.8pt, innerleftmargin=10pt, innerrightmargin=10pt,
+          innertopmargin=8pt, innerbottommargin=8pt,
+          skipabove=10pt, skipbelow=10pt]{notebox}
+
+\newmdenv[backgroundcolor=lightteal, linecolor=tealgreen,
+          linewidth=0.8pt, innerleftmargin=10pt, innerrightmargin=10pt,
+          innertopmargin=8pt, innerbottommargin=8pt,
+          skipabove=10pt, skipbelow=10pt]{summarybox}
+
+% ── Supplementary figure counter ────────────────────────────────
+\newcounter{suppfig}
+
+% ── Math macros ──────────────────────────────────────────────────
+\newcommand{\phat}{\hat{p}}
+\newcommand{\yhat}{\hat{y}}
+\newcommand{\bbeta}{\boldsymbol{\beta}}
+\newcommand{\bz}{\mathbf{z}}
+
+% ── Hyperref setup ───────────────────────────────────────────────
+\hypersetup{
+  colorlinks = true,
+  linkcolor  = navyblue,
+  citecolor  = tealgreen,
+  urlcolor   = tealgreen
+}
+
+\begin{document}
+\begin{titlepage}
+\thispagestyle{empty}
+\begin{center}
+
+\vspace*{1.5cm}
+
+% Course label
+{\normalsize\color{black}
+\textsc{University of Arizona}\\[4pt]
+\textsc{Department of Epidemiology and Biostatistics}\\[4pt]
+\textsc{BIOS 648: High-Dimensional Health Data Analysis and Machine Learning}
+
+\noindent\rule{\textwidth}{0.8pt}
+\vspace{0.5cm}
+
+% Title
+{\LARGE\bfseries\color{navyblue}
+From Nuclei to Patients: A Systematic Evaluation of
+Aggregation Strategies for Bladder Cancer Recurrence
+Prediction Using Karyometric Morphometry Data}
+
+\vspace{0.5cm}
+\noindent\rule{\textwidth}{0.8pt}
+
+% Author block
+{\large\bfseries Enock Adu Bonsu}\\[6pt]
+{\normalsize\color{midgray}
+PhD Student, Biostatistics\\[4pt]
+\texttt{enocka@arizona.edu}}
+
+\vspace{2.5cm}
+
+% Date and word-count area
+{\normalsize\color{midgray}
+\textit{Submitted in partial fulfillment of the requirements\\
+for BIOS 648 --- Spring 2026}\\[12pt]
+\today}
+
+\vfill
+
+% Keywords at bottom of title page
+\begin{flushleft}
+{\small\color{black}
+\textbf{Keywords:} bladder cancer recurrence, karyometry, multiple-instance learning, feature aggregation, cross-validation, ensemble methods, nuclear morphometry, Leakage}
+\end{flushleft}
+
+\end{center}
+\end{titlepage}
+
+% ═════════════════════════════════════════════════════
+%  PAGE 2 — ABSTRACT
+% ════════════════════════════════════════════════════
+\newpage
+\thispagestyle{empty}
+\setcounter{page}{1}   % abstract page = page 1 (TOC will be i, body 1+)
+
+\begin{center}
+{\large\bfseries\color{navyblue} Abstract}
+\end{center}
+
+\vspace{0.5em}
+\noindent\rule{\textwidth}{0.4pt}
+\vspace{0.5em}
+
+\begin{spacing}{1.15}
+\noindent
+Karyometric data from bladder cancer patients present a standard multiple-instance learning (MIL) problem: 92 morphometric features are extracted from approximately 100 cell nuclei per patient, yet
+the clinical outcome (recurrence vs.\ non-recurrence) is observed only once per patient. Standard practice collapses nuclear measurements to per-feature means, discarding distributional information, and frequently evaluates models through nucleus-level cross-validation, a method that introduces severe information
+leakage. We propose and systematically evaluate a three-layer framework comprising three patient-level representation strategies (mean + quantile summaries, score-guided softmax-weighted features, and probability aggregation) crossed with four classifiers (lasso logistic regression, random forest, PCA + LDA, and a single hidden-layer neural network), plus a stacking meta-ensemble; 13 models in total, all evaluated under rigorous patient-level
+leave-one-out cross-validation ($n = 84$ patients).
+
+The score-guided softmax-weighted representation (Representation~B) consistently outperformed mean-summary representations (Representation~A) by 10--13 percentage points in misclassification error (MCE) across all four classifiers, demonstrating that the patient-level aggregation strategy contributes more to predictive performance than the choice of downstream classifier. The stacking meta-ensemble achieved the best overall performance (MCE~$= 0.321$,
+95\%~CI: 0.224--0.432; sensitivity~$= 0.641$; specificity~$= 0.711$), correctly identifying 25 of 39 recurrent patients. We further demonstrate, through a deliberate controlled experiment, that nucleus-level cross-validation inflates apparent performance by 33.9 percentage points (56 \% overoptimism), confirming this as a critical methodological pitfall in hierarchical biomedical data. Feature
+importance analysis identified within-patient variability measures, specifically the standard deviation and 90th percentile of features f54 and f53, as the most predictive karyometric attributes, suggesting that nuclear morphological heterogeneity
+drives recurrence prediction more than mean morphology alone.
+\end{spacing}
+
+\vspace{0.8em}
+\noindent\rule{\textwidth}{0.4pt}
+
+% ════════════════════════════════════════════════════
+%  PAGE 3 — TABLE OF CONTENTS
+% ═════════════════════════════════════════════════════
+\newpage
+\thispagestyle{plain}
+{
+\hypersetup{linkcolor=navyblue}
+\tableofcontents
+}
+
+\newpage
+\setcounter{page}{1}
+\pagestyle{plain}
+
+
+\section{Introduction}
+ 
+Bladder cancer recurs in over 50\% of patients within five years of surgical resection \citep{korde2009}, making accurate recurrence prediction clinically important for triaging surveillance and adjuvant therapy. Karyometry, computational measurement of nuclear morphology from histological images has been proposed as a non-invasive prognostic biomarker \citep{korde2009}, but the optimal statistical approach for patient-level prediction from nucleus-level measurements remains open.
+ 
+The core challenge is a measurement--outcome mismatch that is; morphometric features are extracted nucleus-by-nucleus ($\approx$100 per patient), yet the clinical label, recurrent (R) or non-recurrent (NR), is observed once per patient, the defining structure of a \emph{multiple-instance learning} (MIL) problem \citep{dietterich1997}. Standard practice collapses measurements into per-feature means \citep{korde2009}, discarding distributional shape that may be more discriminating if recurrence is driven by a subpopulation of aberrant cells \citep{nowell1976}. A second widespread flaw is performing cross-validation at the nucleus level rather than the patient level \citep{campanella2019}, which introduces severe leakage and inflates apparent performance.
+ 
+We address both issues through a three-layer framework, three patient-level representation strategies (including a proposed score-guided softmax-weighted aggregation inspired by attention-based MIL \citep{ilse2018}) crossed with four classifiers and combined via a stacking meta-ensemble, evaluated under rigorous patient-level leave-one-out cross-validation with an empirical quantification of leakage bias. The primary question is: \emph{does the nucleus-to-patient aggregation strategy matter as much as the choice of downstream classifier?}
+
+% ════════════════════════════════════════════════════
+\section{Methods}
+% ════════════════════════════════════════════════════
+
+\subsection{Data and Pre-processing}
+
+The karyometry dataset \citep{korde2009} comprises 84 bladder cancer patients: 39 with one or more recurrences (R) and 45 without recurrence during at least eight years of follow-up. Approximately 100 nuclei from the original tumor were imaged for
+each patient, yielding 8,427 nucleus-level observations in total. For each nucleus, 92 morphometric features (f1--f92) were
+extracted, including total optical density (OD), nuclear area, nuclear roundness, OD standard deviation, min/max axis ratio, OD histogram features, co-occurrence matrix statistics, and run-length matrix statistics.
+
+All 92 features were standardized to zero mean and unit variance using statistics computed from training-fold data only within each cross-validation fold, preventing any information from the held-out test patient from influencing feature scaling. No missing
+values were present. The mild class imbalance (39~R, 45~NR; 46.4\% vs.\ 53.6\%) was managed by reporting sensitivity and specificity separately in addition to overall MCE.
+
+\subsection{Patient-Level Representations (Layer 1)}
+
+Let $x_{ijk}$ denote the value of feature~$k$ for nucleus~$j$ of patient~$i$, where $j = 1,\ldots,n_i$ ($n_i \approx 100$). We construct three patient-level representations of increasing sophistication.
+
+\subsubsection{Representation A: Mean + Quantile Summary Vector}
+
+For each feature $k$, we compute five summary statistics across the $n_i$ nuclei, the mean, standard deviation, and the 10th, 50th (median), and 90th percentiles, yielding a $92\times5 = 460$-dimensional patient vector:
+\begin{equation}
+  \mathbf{a}_{ik} =
+  \Bigl(
+    \bar{x}_{i\cdot k},\;
+    s_{i\cdot k},\;
+    Q_{10}(x_{i\cdot k}),\;
+    Q_{50}(x_{i\cdot k}),\;
+    Q_{90}(x_{i\cdot k})
+  \Bigr).
+  \label{eq:repA}
+\end{equation}
+This is the standard approach in the karyometry literature, capturing distributional shape via quantiles and variability via the standard deviation. It corresponds to \emph{uniform pooling}
+in which all nuclei contribute equally to the patient summary.
+
+\subsubsection{Representation B: Score-Guided Instance-Weighted Vector}
+
+The second representation replaces uniform weights with
+nucleus-specific weights derived from a recurrence-risk scorer, motivated by the possibility that a small subset of aberrant nuclei may drive recurrence risk. A Random Forest scorer is trained at the nucleus level using the patient's group label as a pseudo-label for each nucleus (the standard MIL assumption).
+The scorer is re-fitted within each LOOCV fold and never sees the held-out patient's nuclei, so nucleus-level overfitting does not leak across patients. It produces predicted recurrence probabilities $\hat{p}_{ij}$ for each nucleus.
+
+Softmax-normalized instance weights with temperature $\tau > 0$:
+\begin{equation}
+  w_{ij} =
+  \frac{\exp\!\bigl(\hat{p}_{ij}/\tau\bigr)}
+       {\sum_{j'}\exp\!\bigl(\hat{p}_{ij'}/\tau\bigr)},
+  \label{eq:softmax}
+\end{equation}
+produce the patient representation:
+\begin{equation}
+  b_{ik} = \sum_{j} w_{ij}\, x_{ijk}.
+  \label{eq:repB}
+\end{equation}
+As $\tau \to \infty$, weights become uniform (recovering
+Representation~A); as $\tau \to 0$, the highest-risk nucleus
+dominates, approximating max-pooling. The optimal $\tau \in
+\{0.1, 0.5, 1, 2, 5, \infty\}$ is selected by internal 5-fold
+CV within each LOOCV training fold. This mechanism is
+conceptually equivalent to attention-based pooling in deep MIL
+\citep{ilse2018}, adapted for the tabular small-sample setting where end-to-end attention training is statistically infeasible.
+
+\subsubsection{Representation C: Nucleus-Level Probability Aggregation}
+
+The third representation collapses the nucleus-level predicted probabilities to three scalar summaries:
+\begin{equation}
+  \mathbf{c}_i =
+  \Bigl(
+    \bar{\hat{p}}_{i\cdot},\;
+    \max_j \hat{p}_{ij},\;
+    Q_{90}(\hat{p}_{i\cdot})
+  \Bigr),
+  \label{eq:repC}
+\end{equation}
+yielding a 3-dimensional patient representation. This is intentionally a low-dimensional diagnostic extreme: if its performance matches Representation~A (460 features), the richer distributional summaries carry little additional information.
+
+\subsection{Patient-Level Classifiers (Layer 2)}
+
+Four classifiers are applied to each representation.
+
+\textbf{Lasso logistic regression.} For patient $i$ with representation $\mathbf{z}_i$ and outcome $y_i\in\{0,1\}$:
+\begin{equation}
+  \log\frac{P(y_i=1|\mathbf{z}_i)}{P(y_i=0|\mathbf{z}_i)}
+  = \beta_0 + \boldsymbol{\beta}^\top \mathbf{z}_i,
+\end{equation}
+with $L_1$ penalty $\lambda\sum_k|\beta_k|$. The penalty
+$\lambda$ is selected by 5-fold CV via \texttt{glmnet}
+\citep{friedman2010}; automatic variable selection is critical
+for Representation~A (460 features, 83 training patients).
+
+\textbf{Random Forest.} 500 trees with $\lfloor\sqrt{p}\rfloor$
+split features via \texttt{randomForest} \citep{liaw2002}.
+Permutation importance is extracted for interpretability.
+
+\textbf{PCA + LDA.} For Representation~A, PCA reduces the 460-dimensional space to $M$ principal components (chosen by 5-fold CV, $M \leq 30$), then LDA is applied. For Representations~B and~C, LDA is applied directly. Features with within-class SD~$< 10^{-8}$ are removed to prevent singularity.
+
+\textbf{Neural network.} Single hidden layer, $H$ hidden units ($H \in \{2,4,6,8,10\}$, capped by a 3,000-weight budget) and weight decay $\lambda \in \{0.001, 0.01, 0.1\}$ via \texttt{nnet}
+\citep{venables2002}. Five random restarts per $(H,\lambda)$; best-fitting solution retained.
+
+The resulting $3\times4 = 12$ models (M1--M12) plus the
+majority-class baseline (M0) are summarized in
+Table~\ref{tab:models}.
+
+% ── Table 1 inline ───────────────────────────────────────────────
+\begin{table}[H]
+\centering
+\caption{Model specifications. Representation~A: mean + SD +
+  Q10/Q50/Q90 per feature (460-dim). Representation~B:
+  softmax-weighted mean with tuned temperature $\tau$ (92-dim).
+  Representation~C: mean, max, Q90 of nucleus scores (3-dim).
+  All tuning parameters selected by internal 5-fold CV within
+  each LOOCV training fold.}
+\label{tab:models}
+\small
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\textwidth}{llXr}
+\toprule
+\textbf{Model} & \textbf{Representation} & \textbf{Classifier}
+  & \textbf{Dim.} \\
+\midrule
+M0  & None (majority class) & Always predict NR & --- \\
+\midrule
+M1  & A & Lasso logistic regression ($\lambda$ tuned) & 460 \\
+M2  & A & Random Forest (500 trees)                   & 460 \\
+M3  & A & PCA + LDA ($M$ PCs, CV-tuned)               & $\to M$ \\
+M4  & A & Neural network ($H$, decay tuned)            & 460 \\
+\midrule
+M5  & B ($\tau$ tuned) & Lasso logistic regression & 92 \\
+M6  & B & Random Forest                             & 92 \\
+M7  & B & LDA                                       & 92 \\
+M8  & B & Neural network                            & 92 \\
+\midrule
+M9  & C & Lasso logistic regression & 3 \\
+M10 & C & Random Forest             & 3 \\
+M11 & C & LDA                       & 3 \\
+M12 & C & Neural network            & 3 \\
+\midrule
+META & All (M1--M12) & Ridge LR on $84\times12$ prob.\ matrix & 12 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Stacking Meta-Ensemble (Layer 3)}
+
+Out-of-fold predicted probabilities from M1--M12 form an
+$84\times12$ meta-feature matrix. A ridge logistic regression
+meta-learner is fitted on this matrix and evaluated by a second
+LOOCV loop \citep{wolpert1992}. Ridge preserves all 12 base-model
+contributions; using out-of-fold predictions prevents the
+information leakage that would arise from training-set predictions.
+
+\subsection{Evaluation Protocol}
+
+\subsubsection{Patient-Level Leave-One-Out Cross-Validation}
+
+All 13 models are evaluated by patient-level LOOCV (84 folds). In
+each fold, the following steps are performed on the 83 training
+patients only, with the held-out patient accessed only at the
+prediction step:
+\begin{enumerate}[noitemsep, topsep=4pt, leftmargin=*, label=(\arabic*)]
+  \item Feature means and SDs estimated from training nuclei;
+        applied to all patients for standardization.
+  \item Nucleus-level Random Forest scorer retrained from scratch
+        on training-fold nuclei.
+  \item All tuning parameters ($\lambda$, $H$, $M$, $\tau$)
+        selected by internal 5-fold CV on 83 training patients.
+  \item Patient representations constructed using training-fold
+        parameters.
+  \item Four classifiers fitted on 83 training patient vectors.
+  \item Held-out patient predicted; result stored.
+\end{enumerate}
+
+This ensures no information about the held-out patient influences
+any aspect of the pipeline. Using patient-level labels as
+nucleus-level pseudo-labels introduces dependence \emph{within}
+patients but not \emph{across} patients, which is correctly
+handled by patient-level holdout.
+
+\subsubsection{Performance Metrics and Uncertainty Quantification}
+
+The primary metric is patient-level misclassification error:
+\begin{equation}
+  \mathrm{MCE} = \frac{1}{84}\sum_{i=1}^{84}
+    \mathbf{1}(\hat{y}_i \neq y_i).
+\end{equation}
+A 95\% exact binomial (Clopper--Pearson) confidence interval is
+computed via \texttt{binom.test()} in R. Secondary metrics are
+sensitivity and specificity, reported separately to characterize
+the clinical tradeoff between missed recurrences and unnecessary
+interventions.
+
+\subsubsection{Statistical Comparison and Leakage Demonstration}
+
+McNemar's test is applied to each pair of models with Bonferroni
+correction. To quantify leakage bias, M2 is additionally evaluated
+by 10-fold CV with nuclei randomly assigned to folds, and the
+difference in MCE from the valid patient-level estimate is
+reported.
+
+\textbf{Software.} R version~4.3+; packages: \texttt{glmnet}
+\citep{friedman2010}, \texttt{randomForest} \citep{liaw2002},
+\texttt{MASS}, \texttt{nnet} \citep{venables2002},
+\texttt{stats::prcomp}.
+
+% ═════════════════════════════════════════════════════
+\section{Results}
+% ═════════════════════════════════════════════════════
+
+\subsection{Overview}
+
+Table~\ref{tab:results} summarizes LOOCV performance for all 13 models. The majority-class baseline M0 achieves MCE~$= 0.464$ (95\%~CI: 0.355--0.576) with perfect specificity and zero sensitivity by construction.
+
+% ── Table 2 inline ───────────────────────────────────────────────
+\begin{table}[H]
+\centering
+\caption{LOOCV performance for all 13 models. MCE =
+  misclassification error; CI = 95\% Clopper--Pearson exact
+  binomial interval; Sens = sensitivity (TPR for R patients);
+  Spec = specificity (TNR for NR patients). \textbf{Bold} =
+  best value among M1--M12 and META.
+  $^\dagger$Significantly worse than M0 (McNemar's test,
+  Bonferroni-adjusted $p < 0.05$).}
+\label{tab:results}
+\small
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\textwidth}{llrrrr}
+\toprule
+\textbf{Model} & \textbf{Description}
+  & \textbf{MCE} & \textbf{95\% CI}
+  & \textbf{Sens} & \textbf{Spec} \\
+\midrule
+M0  & Majority class (NR)
+    & 0.464 & (0.355, 0.576) & 0.000 & 1.000 \\
+\midrule
+M1  & Lasso, Rep~A
+    & 0.571 & (0.459, 0.679) & 0.231 & 0.600 \\
+M2  & Random Forest, Rep~A
+    & 0.607 & (0.495, 0.712) & 0.769 & 0.067 \\
+M3  & PCA+LDA, Rep~A
+    & 0.571 & (0.459, 0.679) & 0.410 & 0.444 \\
+M4  & Neural Net, Rep~A
+    & 0.560 & (0.447, 0.668) & 0.462 & 0.422 \\
+\midrule
+M5  & Lasso, Rep~B
+    & \textbf{0.429} & (0.321, 0.541) & 0.513 & 0.622 \\
+M6  & Random Forest, Rep~B
+    & 0.452 & (0.343, 0.565) & 0.538 & 0.556 \\
+M7  & LDA, Rep~B
+    & 0.500 & (0.389, 0.611) & 0.436 & 0.556 \\
+M8  & Neural Net, Rep~B
+    & 0.583 & (0.471, 0.690) & 0.282 & 0.533 \\
+\midrule
+M9$^\dagger$  & Lasso, Rep~C
+    & 0.714 & (0.605, 0.808) & 0.231 & 0.333 \\
+M10$^\dagger$ & Random Forest, Rep~C
+    & 0.714 & (0.605, 0.808) & 0.231 & 0.333 \\
+M11$^\dagger$ & LDA, Rep~C
+    & 0.714 & (0.605, 0.808) & 0.231 & 0.333 \\
+M12$^\dagger$ & Neural Net, Rep~C
+    & 0.714 & (0.605, 0.808) & 0.231 & 0.333 \\
+\midrule
+META & Stacking ensemble
+    & \textbf{0.321} & (0.224, 0.432)
+    & \textbf{0.641} & \textbf{0.711} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Primary Outcome: Misclassification Error}
+
+The stacking meta-ensemble achieved the lowest MCE at
+$\mathbf{0.321}$ (95\%~CI: 0.224--0.432), with sensitivity 0.641
+and specificity 0.711, the only model to meaningfully
+outperform M0 on both metrics simultaneously
+(Figure~\ref{fig:forest}). Among individual models, M5 (lasso on
+Representation~B) achieved the best performance with
+MCE~$= 0.429$ (95\%~CI: 0.321--0.541), sensitivity 0.513, and
+specificity 0.622.
+
+% ── Figure 1 inline ──────────────────────────────────────────────
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{Fig1_MCE_forestplot}
+  \caption{\textbf{LOOCV misclassification error with 95\%
+    Clopper--Pearson confidence intervals} for all 13 models,
+    ordered from lowest (best) to highest MCE.
+    \textcolor{repA}{\textbf{Blue}}: Representation~A
+    (mean + quantile summaries, 460-dim);
+    \textcolor{repB}{\textbf{green}}: Representation~B
+    (score-weighted, 92-dim);
+    \textcolor{repC}{\textbf{red}}: Representation~C
+    (probability aggregation, 3-dim);
+    \textcolor{metaC}{\textbf{purple}}: meta-ensemble.
+    Dashed line: majority-class baseline (MCE~$= 0.464$).}
+  \label{fig:forest}
+\end{figure}
+
+\subsection{Effect of Patient Representation}
+
+A consistent pattern emerged across all four classifiers:
+Representation~B outperformed Representation~A, with the best
+Rep~B model (M5, MCE~$= 0.429$) improving over the best Rep~A
+model (M4, MCE~$= 0.560$) by 13.1 percentage points. This
+pattern confirms that the aggregation strategy contributes more
+to predictive performance than classifier choice within a
+representation (see also Supplementary Figure~\ref{fig:heatmap}).
+Representation~C performed substantially worse, with all four
+classifiers achieving MCE~$= 0.714$, significantly worse than
+the majority-class baseline (McNemar's adjusted $p = 0.018$).
+
+\subsection{Effect of Classifier Choice}
+
+Within Representation~B, lasso (M5, MCE~$= 0.429$) and Random
+Forest (M6, MCE~$= 0.452$) outperformed LDA (M7, MCE~$= 0.500$)
+and the neural network (M8, MCE~$= 0.583$). The neural network's
+poorer performance reflects the small patient sample ($n = 84$).
+M2 (RF, Rep~A) showed an anomalous pattern: high sensitivity
+(0.769) paired with near-zero specificity (0.067), indicating
+near-indiscriminate prediction of recurrence.
+
+\subsection{Sensitivity, Specificity, and Confusion Matrices}
+
+Figure~\ref{fig:sensspec} shows sensitivity and specificity for
+all models. In bladder cancer surveillance, sensitivity carries
+greater clinical weight than specificity, since a missed recurrence
+is clinically more harmful than an unnecessary follow-up. The
+meta-ensemble achieves the best balance (sensitivity 0.641,
+specificity 0.711). Figure~\ref{fig:confmat} illustrates the
+progression: M0 identifies 0 of 39 recurrent patients; M5
+identifies 20 of 39; META identifies 25 of 39, reducing total
+errors from 39 (M0) to 36 (M5) to 27 (META) out of 84 patients.
+
+% ── Figure 2 inline ──────────────────────────────────────────────
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{Fig2_SensSPec.png}
+  \caption{\textbf{Sensitivity and specificity by model.}
+    Green: sensitivity (TPR for R patients). Blue: specificity
+    (TNR for NR patients). Dashed line at 0.5. The meta-ensemble
+    achieves the best clinical balance (sensitivity 0.641,
+    specificity 0.711). M2 exhibits high sensitivity (0.769)
+    but near-zero specificity (0.067), reflecting
+    near-indiscriminate recurrence prediction. Representation~C
+    models (M9--M12) are uniformly poor on both metrics.}
+  \label{fig:sensspec}
+\end{figure}
+
+% ── Figure 3 inline ──────────────────────────────────────────────
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{Fig6_ConfusionMatrices.png}
+  \caption{\textbf{Confusion matrices for three key models.}
+    Green cells: correct classifications; pink cells: errors.
+    \textit{Left}: M0 --- 0 of 39 recurrent patients identified;
+    MCE~$= 0.464$. \textit{Centre}: M5 --- 20 of 39 identified;
+    MCE~$= 0.429$. \textit{Right}: META --- 25 of 39 identified;
+    MCE~$= 0.321$. Total errors: 39 (M0), 36 (M5), 27 (META).}
+  \label{fig:confmat}
+\end{figure}
+
+\subsection{Additional Diagnostics}
+ 
+No individual model significantly outperformed M0 after Bonferroni correction (all adjusted $p > 0.05$); the meta-ensemble approached significance (unadjusted $p = 0.074$), consistent with limited power at $n = 84$. Nucleus-level 10-fold CV yielded an apparent MCE of 0.268 for M2 vs.\ the valid LOOCV estimate of 0.607, a bias of $\mathbf{0.339}$ (56\% overoptimism; Supplementary Figure~\ref{fig:leakage}). Permutation importance (Supplementary Figure~\ref{fig:importance}) identified variability summaries \texttt{f54\_sd}, \texttt{f53\_sd}, and \texttt{f53\_q90} as the top features, confirming that nuclear heterogeneity is more prognostic than mean morphology; near-uniform softmax weights (R~$= 0.0112$, NR~$= 0.0118$) indicate this signal is diffuse across the nuclear population rather than concentrated in outlier cells.
+
+\section{Discussion and Conclusions}
+% ════════════════════════════════════════════════════════════════
+
+\subsection{Principal Findings}
+
+This study provides three principal findings.
+
+\textbf{Aggregation strategy matters more than classifier
+choice.} The score-guided softmax-weighted representation
+(Representation~B) improved over mean-summary representations
+(Representation~A) by 10--13 percentage points in MCE across
+all four classifiers, while classifier differences within a
+representation were smaller. This finding directly answers the
+study's primary question: how nuclei are aggregated contributes
+more to patient-level predictive performance than which classifier
+is applied. It also validates the course's suggestion that
+variability and percentile measures outperform simple means for
+this type of data.
+
+\textbf{Ensemble combination provides additional gain.} The
+stacking meta-ensemble (MCE~$= 0.321$) improved over the best
+individual model (M5, MCE~$= 0.429$) by 10.8 percentage points,
+correctly identifying 25 of 39 recurrent patients. This
+demonstrates that different representations and classifiers
+capture complementary aspects of the data and that their
+combination via a simple ridge logistic meta-learner adds
+meaningful value.
+
+\textbf{Nucleus-level cross-validation is severely biased.}
+The 33.9 percentage-point inflation from nucleus-level CV (56\%
+overoptimism) represents a fundamental methodological flaw
+present in much of the karyometry literature. Patient-level LOOCV
+is the only valid evaluation design for this hierarchical
+data structure, and its importance is reinforced empirically by
+this demonstration.
+
+\subsection{Interpretation of Feature Importance}
+
+The dominance of f54 and f53 variability measures (likely
+co-occurrence or run-length matrix statistics capturing chromatin
+texture) suggests that nuclear morphological heterogeneity is
+more prognostically informative than mean morphology. This is
+biologically plausible: cancer recurrence may be associated with
+cellular heterogeneity consistent with clonal evolution in bladder
+cancer, rather than uniform morphological shift. The diffuse
+nucleus-level saliency (near-uniform softmax weights) further
+suggests that recurrence is a population-level property of the
+tumor's nuclear landscape rather than a feature of specific
+outlier cells.
+
+\subsection{Limitations}
+
+\textbf{Sample size.} With $n = 84$ patients, no individual model
+achieves statistical significance over the baseline after
+Bonferroni correction. All findings are descriptive and
+exploratory pending external validation on an independent cohort.
+
+\textbf{Probability calibration.} Predicted probabilities were
+compressed near the marginal rate ($\approx 0.46$) due to strong
+regularization at $n = 84$. ROC-based analysis was not feasible;
+all comparisons rest on classification decisions at the 0.5
+threshold.
+
+\textbf{Feature interpretation.} The mapping of f1--f92 to named
+morphometric measurements was unavailable, limiting biological
+interpretation of top features.
+
+\textbf{MIL approximation.} Using patient-level labels as
+nucleus-level pseudo-labels introduces noise for heterogeneous
+patients. End-to-end attention MIL \citep{ilse2018} would be more
+principled but requires sample sizes an order of magnitude larger.
+
+
+%  REFERENCES
+% ═════════════════════════════════════════════════════
+\clearpage
+\addcontentsline{toc}{section}{References}
+\begin{thebibliography}{9}
+\small
+
+\bibitem{korde2009}
+Korde, V.R., Bartels, H.G., Barton, J.K., \& Ranger-Moore, J. (2009).
+Automatic segmentation of cell nuclei in bladder and skin tissue
+for karyometric analysis.
+\textit{Analytical and Quantitative Cytology and Histology},
+31(2), 83--89.
+
+\bibitem{breiman2001}
+Breiman, L. (2001).
+Random forests.
+\textit{Machine Learning}, 45(1), 5--32.
+
+\bibitem{dietterich1997}
+Dietterich, T.G., Lathrop, R.H., \& Lozano-P{\'e}rez, T. (1997).
+Solving the multiple instance problem with axis-parallel rectangles.
+\textit{Artificial Intelligence}, 89(1--2), 31--71.
+
+\bibitem{friedman2010}
+Friedman, J., Hastie, T., \& Tibshirani, R. (2010).
+Regularization paths for generalized linear models via coordinate
+descent.
+\textit{Journal of Statistical Software}, 33(1), 1--22.
+
+\bibitem{ilse2018}
+Ilse, M., Tomczak, J.M., \& Welling, M. (2018).
+Attention-based deep multiple instance learning.
+\textit{Proceedings of ICML 2018}. PMLR.
+
+\bibitem{liaw2002}
+Liaw, A., \& Wiener, M. (2002).
+Classification and regression by randomForest.
+\textit{R News}, 2(3), 18--22.
+
+\bibitem{venables2002}
+Venables, W.N., \& Ripley, B.D. (2002).
+\textit{Modern Applied Statistics with S} (4th ed.). Springer.
+
+\bibitem{wolpert1992}
+Wolpert, D.H. (1992).
+Stacked generalization.
+\textit{Neural Networks}, 5(2), 241--259.
+
+\bibitem{campanella2019}
+Campanella, G., et al. (2019). Clinical-grade computational pathology using weakly supervised learning on whole slide images.
+\textit{Nature Medicine}, 25(8), 1301--1309.
+
+\bibitem{nowell1976}
+Nowell, P.C. (1976).
+The clonal evolution of tumor cell populations.
+\textit{Science}, 194(4260), 23--28.
+
+\end{thebibliography}
+
+% ════════════════════════════════════════════════════════════════
+%  SUPPLEMENTARY MATERIAL
+% ════════════════════════════════════════════════════════════════
+\clearpage
+\setcounter{section}{0}
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thesubsection}{S\arabic{section}.\arabic{subsection}}
+
+\begin{center}
+{\Large\bfseries\color{navyblue} Supplementary Material}\\[6pt]
+{\normalsize\itshape\color{tealgreen}
+From Nuclei to Patients: A Systematic Evaluation of Aggregation
+Strategies for Bladder Cancer Recurrence Prediction}
+\end{center}
+\noindent\rule{\textwidth}{0.6pt}
+\vspace{0.5em}
+
+\section{Supplementary Methods}
+
+\subsection{Neural Network Weight Budget}
+
+To satisfy \texttt{nnet}'s weight limit, hidden units are capped
+at $H_{\max} = \lfloor(3000-1)/(p+2)\rfloor$ for input
+dimension $p$. For Representation~A ($p=460$), $H_{\max}=6$;
+for Representation~B ($p=92$), $H_{\max}=10$. Five random
+restarts per $(H,\lambda)$; best solution retained by training
+loss.
+
+\subsection{Handling Near-Zero-Variance Features in LDA}
+
+Features f13--f23 and f27--f44 are identically zero for the
+majority of nuclei. Before LDA, columns with within-class
+SD~$<10^{-8}$ are removed. If fewer than two features remain,
+the majority-class prediction is returned. All PCA+LDA inner-CV
+steps use \texttt{tryCatch} to handle remaining singularities.
+
+\section{Supplementary Figures}
+
+\refstepcounter{suppfig}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{Fig4_FeatureImportance.png}
+  \caption{\textbf{Figure S\arabic{suppfig}. Top 20 karyometric
+    features by permutation importance} (Random Forest on
+    Representation~A, all 84 patients, 500 trees). Colour by
+    summary statistic: \textcolor{repA}{\textbf{blue}} = mean,
+    \textcolor{repC}{\textbf{red}} = SD, orange = Q50 (median),
+    purple = Q90. Features f54 and f53 dominate; the prevalence
+    of SD and Q90 summaries confirms that within-patient nuclear
+    variability is more predictive than mean morphology.}
+  \label{fig:importance}
+\end{figure}
+
+\clearpage
+
+\refstepcounter{suppfig}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{Fig5_Leakage.png}
+  \caption{\textbf{Figure S\arabic{suppfig}. Leakage
+    demonstration.} \textit{Panel (a):} M2 under valid
+    patient-level LOOCV (MCE~$= 0.607$, blue) vs.\ leaky
+    nucleus-level 10-fold CV (MCE~$= 0.268$, red). Leakage
+    bias~$= 0.339$ (56\% overoptimism). Dashed line:
+    majority-class baseline.
+    \textit{Panel (b):} Nucleus-level recurrence risk scores
+    by patient group. NR nuclei score near 0 (blue); R nuclei
+    score near 0.8--0.9 (red). The strong nucleus-level separation
+    explains the leakage: the scorer memorizes patient patterns,
+    making held-out nuclei from the same patient trivially
+    classifiable.}
+  \label{fig:leakage}
+\end{figure}
+
+\clearpage
+
+\refstepcounter{suppfig}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{Fig7_Heatmap_MCE.png}
+  \caption{\textbf{Figure S\arabic{suppfig}. MCE heatmap:
+    Representation $\times$ Classifier} for M1--M12.
+    Green = low MCE (better); red = high MCE. Representation~C
+    row (top): uniformly red (MCE~$= 0.714$). Representation~B
+    row (middle): consistently greener than Representation~A
+    (bottom); best cell is M5, Lasso + Rep~B (MCE~$= 0.429$).
+    Variation across rows (representations) exceeds variation
+    across columns (classifiers), confirming aggregation strategy
+    as the primary performance driver.}
+  \label{fig:heatmap}
+\end{figure}
+
+\end{document}
